@@ -29,3 +29,21 @@ jobs:
         name: bandit-report
         path: bandit-report.json
 
+  dast_scan:
+    name: Run ZAP Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Start PyGoat
+      run: |
+        pip install -r requirements.txt
+        python3 manage.py migrate
+        python3 manage.py runserver &
+
+    - name: ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.13.0
+      with:
+        target: http://127.0.0.1:8000
